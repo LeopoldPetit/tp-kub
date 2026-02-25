@@ -23,7 +23,7 @@ Mailpit est un outil de développement qui simule un serveur SMTP et fournit une
 
 1. **Cloner le repository**
 ```bash
-git clone https://github.com/VOTRE-USERNAME/tp-kub.git
+git clone https://github.com/LeopoldPetit/tp-kub.git
 cd tp-kub
 ```
 
