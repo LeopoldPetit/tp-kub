@@ -1,0 +1,34 @@
+🎉 WordPress a été déployé avec succès dans l'environnement {{ .Values.environment }} !
+
+📋 Informations sur le déploiement :
+  
+  Namespace      : {{ .Values.namespace }}
+  Environnement  : {{ .Values.environment }}
+  WordPress pods : {{ .Values.wordpress.replicaCount }}
+  MySQL pods     : {{ .Values.mysql.replicaCount }}
+
+🔍 Vérifier l'état du déploiement :
+
+  kubectl get all -n {{ .Values.namespace }}
+  kubectl get pvc -n {{ .Values.namespace }}
+
+📊 Consulter les quotas et limites :
+
+  kubectl describe resourcequota -n {{ .Values.namespace }}
+  kubectl describe limitrange -n {{ .Values.namespace }}
+
+🌐 Accéder à WordPress :
+
+  kubectl port-forward -n {{ .Values.namespace }} svc/wordpress-{{ .Values.environment }} 8080:80
+
+  Puis ouvrir : http://localhost:8080
+
+📧 Informations de connexion MySQL :
+
+  Host     : wordpress-mysql-{{ .Values.environment }}
+  Database : {{ .Values.mysql.env.MYSQL_DATABASE }}
+  User     : {{ .Values.mysql.env.MYSQL_USER }}
+
+🔐 Note : Les mots de passe sont stockés dans le secret 'mysql-secret'
+
+  kubectl get secret mysql-secret -n {{ .Values.namespace }} -o yaml

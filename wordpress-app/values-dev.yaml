@@ -1,0 +1,62 @@
+# Configuration pour l'environnement DEV
+environment: dev
+
+# Namespace
+namespace: wordpress-dev
+
+# Configuration WordPress
+wordpress:
+  replicaCount: 1
+  image:
+    repository: wordpress
+    tag: "6.4-apache"
+    pullPolicy: IfNotPresent
+  
+  service:
+    type: ClusterIP
+    port: 80
+  
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+  
+  env:
+    WORDPRESS_DB_HOST: wordpress-mysql-dev
+    WORDPRESS_DB_NAME: wordpress_dev
+    WORDPRESS_DB_USER: wp_user_dev
+    WORDPRESS_DB_PASSWORD: dev_password_123
+
+# Configuration MySQL
+mysql:
+  replicaCount: 1
+  image:
+    repository: mysql
+    tag: "8.0"
+    pullPolicy: IfNotPresent
+  
+  service:
+    type: ClusterIP
+    port: 3306
+  
+  persistence:
+    enabled: true
+    size: 2Gi
+    storageClass: ""
+  
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "200m"
+  
+  env:
+    MYSQL_ROOT_PASSWORD: root_dev_password
+    MYSQL_DATABASE: wordpress_dev
+    MYSQL_USER: wp_user_dev
+    MYSQL_PASSWORD: dev_password_123

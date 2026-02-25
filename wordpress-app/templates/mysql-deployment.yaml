@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress-mysql-{{ .Values.environment }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: mysql
+    environment: {{ .Values.environment }}
+spec:
+  replicas: {{ .Values.mysql.replicaCount }}
+  selector:
+    matchLabels:
+      app: mysql
+      environment: {{ .Values.environment }}
+  template:
+    metadata:
+      labels:
+        app: mysql
+        environment: {{ .Values.environment }}
+    spec:
+      containers:
+      - name: mysql
+        image: "{{ .Values.mysql.image.repository }}:{{ .Values.mysql.image.tag }}"
+        imagePullPolicy: {{ .Values.mysql.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.mysql.service.port }}
+          name: mysql
+        envFrom:
+        - secretRef:
+            name: mysql-secret
+        resources:
+          {{- toYaml .Values.mysql.resources | nindent 10 }}
+        volumeMounts:
+        - name: mysql-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-storage
+        {{- if .Values.mysql.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: mysql-pvc
+        {{- else }}
+        emptyDir: {}
+        {{- end }}

@@ -1,0 +1,62 @@
+# Configuration pour l'environnement PROD
+environment: prod
+
+# Namespace
+namespace: wordpress-prod
+
+# Configuration WordPress
+wordpress:
+  replicaCount: 2
+  image:
+    repository: wordpress
+    tag: "6.4-apache"
+    pullPolicy: IfNotPresent
+  
+  service:
+    type: ClusterIP
+    port: 80
+  
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "200m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+  
+  env:
+    WORDPRESS_DB_HOST: wordpress-mysql-prod
+    WORDPRESS_DB_NAME: wordpress_prod
+    WORDPRESS_DB_USER: wp_user_prod
+    WORDPRESS_DB_PASSWORD: prod_secure_password_456
+
+# Configuration MySQL
+mysql:
+  replicaCount: 1
+  image:
+    repository: mysql
+    tag: "8.0"
+    pullPolicy: IfNotPresent
+  
+  service:
+    type: ClusterIP
+    port: 3306
+  
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: ""
+  
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "200m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
+  
+  env:
+    MYSQL_ROOT_PASSWORD: root_prod_secure_password
+    MYSQL_DATABASE: wordpress_prod
+    MYSQL_USER: wp_user_prod
+    MYSQL_PASSWORD: prod_secure_password_456

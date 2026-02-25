@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: {{ .Values.environment }}-quota
+  namespace: {{ .Values.namespace }}
+spec:
+  hard:
+    {{- if eq .Values.environment "dev" }}
+    requests.cpu: "500m"
+    requests.memory: "1Gi"
+    limits.cpu: "1"
+    limits.memory: "2Gi"
+    persistentvolumeclaims: "3"
+    pods: "5"
+    {{- else if eq .Values.environment "prod" }}
+    requests.cpu: "2"
+    requests.memory: "4Gi"
+    limits.cpu: "4"
+    limits.memory: "8Gi"
+    persistentvolumeclaims: "10"
+    pods: "20"
+    {{- end }}

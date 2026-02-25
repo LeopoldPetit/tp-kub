@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: {{ .Values.environment }}-limitrange
+  namespace: {{ .Values.namespace }}
+spec:
+  limits:
+  - max:
+      {{- if eq .Values.environment "dev" }}
+      cpu: "500m"
+      memory: "1Gi"
+      {{- else if eq .Values.environment "prod" }}
+      cpu: "1"
+      memory: "2Gi"
+      {{- end }}
+    min:
+      cpu: "50m"
+      memory: "64Mi"
+    default:
+      {{- if eq .Values.environment "dev" }}
+      cpu: "200m"
+      memory: "256Mi"
+      {{- else if eq .Values.environment "prod" }}
+      cpu: "500m"
+      memory: "512Mi"
+      {{- end }}
+    defaultRequest:
+      {{- if eq .Values.environment "dev" }}
+      cpu: "100m"
+      memory: "128Mi"
+      {{- else if eq .Values.environment "prod" }}
+      cpu: "200m"
+      memory: "256Mi"
+      {{- end }}
+    type: Container
