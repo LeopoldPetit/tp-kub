@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mailpit.fullname" . }}
+  labels:
+    app: {{ include "mailpit.name" . }}
+    chart: {{ include "mailpit.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "mailpit.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "mailpit.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        ports:
+        - name: http
+          containerPort: {{ .Values.service.port }}
+        - name: smtp
+          containerPort: {{ .Values.service.smtp.port }}
+        envFrom:
+        - configMapRef:
+            name: {{ include "mailpit.fullname" . }}
+        volumeMounts:
+        - mountPath: /maildir
+          name: maildir
+      volumes:
+      - name: maildir
+        persistentVolumeClaim:
+          claimName: {{ include "mailpit.fullname" . }}

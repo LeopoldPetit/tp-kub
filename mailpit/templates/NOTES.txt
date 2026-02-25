@@ -1,0 +1,12 @@
+Mailpit a été déployé avec succès !
+
+Pour accéder à l'interface Web de Mailpit :
+
+  kubectl port-forward svc/{{ include "mailpit.fullname" . }} 8025:8025
+
+Puis ouvrir : http://localhost:8025
+
+Pour envoyer des emails de test au serveur SMTP :
+  
+  Hôte : {{ include "mailpit.fullname" . }}
+  Port : {{ .Values.service.smtp.port }}

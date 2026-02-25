@@ -1,0 +1,25 @@
+image:
+  repository: docker.io/axllent/mailpit # image officielle de Mailpit
+  pullPolicy: IfNotPresent # ne la télécharge que si absente
+  tag: "latest" # vide = utiliser .Chart.AppVersion
+
+service:
+  type: ClusterIP # le service est interne au cluster
+  port: 8025 # port HTTP (interface web)
+  smtp:
+    port: 1025 # port SMTP pour recevoir les mails
+
+persistence:
+  enabled: true # activer le stockage persistant
+  size: 1Gi # taille du volume
+
+ingress:
+  enabled: false # on ne publie pas via Ingress
+
+autoscaling:
+  enabled: false # pas de scaling automatique
+
+serviceAccount:
+  create: false # pas de service account spécifique
+
+replicaCount: 1
