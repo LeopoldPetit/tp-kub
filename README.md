@@ -1,8 +1,91 @@
-# Atelier Kubernetes - Chart Helm Mailpit
+# Atelier Kubernetes - Charts Helm
 
-Ce repository contient un chart Helm pour déployer Mailpit, un serveur SMTP de test avec interface web, dans un cluster Kubernetes.
+Ce repository contient deux projets de déploiement Kubernetes avec Helm :
+1. **Mailpit** - Serveur SMTP de test (exercice d'introduction)
+2. **WordPress** - Application complète avec MySQL et multi-environnements (projet principal)
 
-## 📧 Qu'est-ce que Mailpit ?
+---
+
+## 🚀 DÉMARRAGE RAPIDE - WordPress Multi-environnements
+
+### Installation et lancement complet en 4 étapes :
+
+```bash
+# 1. Cloner le repository
+git clone https://github.com/LeopoldPetit/tp-kub.git
+cd tp-kub/wordpress-app
+
+# 2. Installer l'environnement DEV
+helm install wordpress-dev . -f values-dev.yaml
+
+# 3. Attendre que tout soit prêt (environ 1-2 minutes)
+kubectl wait --for=condition=ready pod -l app=mysql -n wordpress-dev --timeout=120s
+kubectl wait --for=condition=ready pod -l app=wordpress -n wordpress-dev --timeout=120s
+
+# 4. Accéder à WordPress
+kubectl port-forward -n wordpress-dev svc/wordpress-dev 8080:80
+# Puis ouvrir http://localhost:8080
+```
+
+### Vérifier le déploiement :
+
+```bash
+# Voir toutes les ressources
+kubectl get all -n wordpress-dev
+
+# Voir les volumes persistants
+kubectl get pvc -n wordpress-dev
+
+# Voir les quotas et limites appliqués
+kubectl describe resourcequota -n wordpress-dev
+kubectl describe limitrange -n wordpress-dev
+
+# Voir les logs
+kubectl logs -l app=wordpress -n wordpress-dev
+kubectl logs -l app=mysql -n wordpress-dev
+```
+
+### Installer aussi l'environnement PROD (optionnel) :
+
+```bash
+# Installation PROD (2 replicas WordPress, 10Gi MySQL, plus de ressources)
+helm install wordpress-prod . -f values-prod.yaml
+
+# Attendre que ce soit prêt
+kubectl wait --for=condition=ready pod -l app=mysql -n wordpress-prod --timeout=120s
+kubectl wait --for=condition=ready pod -l app=wordpress -n wordpress-prod --timeout=120s
+
+# Accéder à WordPress PROD
+kubectl port-forward -n wordpress-prod svc/wordpress-prod 8081:80
+# Puis ouvrir http://localhost:8081
+```
+
+### Désinstaller :
+
+```bash
+# Désinstaller DEV
+helm uninstall wordpress-dev
+kubectl delete namespace wordpress-dev
+
+# Désinstaller PROD
+helm uninstall wordpress-prod
+kubectl delete namespace wordpress-prod
+```
+
+---
+
+## 📚 Documentation complète
+
+- **WordPress** : Voir `wordpress-app/README.md` (documentation détaillée)
+- **Mailpit** : Voir la section ci-dessous
+
+---
+
+## 📧 Projet Mailpit (exercice d'introduction)
+
+Mailpit est un serveur SMTP de test avec interface web.
+
+### Qu'est-ce que Mailpit ?
 
 Mailpit est un outil de développement qui simule un serveur SMTP et fournit une interface Web pour lire les e-mails de test. Il permet de :
 
